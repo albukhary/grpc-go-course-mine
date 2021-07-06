@@ -5,12 +5,14 @@ import (
 	"log"
 	"net"
 
-	"github.com/albukhary/grpc-go-course-mine/greet/greetpb"
+	pb "github.com/albukhary/grpc-go-course-mine/greet/greetpb"
 	
 	"google.golang.org/grpc"
 )
 
-type server struct{}
+type server struct{
+	pb.UnimplementedGreetServiceServer
+}
 
 func main(){
 	fmt.Println("Salam")
@@ -24,7 +26,7 @@ func main(){
 	// createa gRPC server
 	s := grpc.NewServer()
 	// register services 
-	__greetpb.RegisterGreetServiceServer(s, &server{} )
+	pb.RegisterGreetServiceServer(s, &server{} )
 
 	// bind the port to the gRPC server
 	if err := s.Serve(lis); err != nil {
