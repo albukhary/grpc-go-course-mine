@@ -5,31 +5,30 @@ import (
 	"log"
 	"net"
 
-	pb "github.com/albukhary/grpc-go-course-mine/greet/greetpb"
-	
+	greetpb "github.com/albukhary/grpc-go-course-mine/greet/greetpb"
 	"google.golang.org/grpc"
 )
 
-type server struct{
-	pb.UnimplementedGreetServiceServer
+type server struct {
+	greetpb.UnimplementedGreetServiceServer
 }
 
-func main(){
+func main() {
 	fmt.Println("Salam")
 
-	// binding port 
-	lis, err := net.Listen("tcp","0.0.0.50051")
+	// Create a network listener, bind it to port 50051
+	lis, err := net.Listen("tcp", "0.0.0.0:50051")
 	if err != nil {
-		log.Fatalf("Failed to listen %v", err)
+		log.Fatalf("Failed to listen: %v", err)
 	}
 
-	// createa gRPC server
+	// Create a gRPC server
 	s := grpc.NewServer()
-	// register services 
-	pb.RegisterGreetServiceServer(s, &server{} )
 
-	// bind the port to the gRPC server
+	// Register a service to the gRPC server
+	greetpb.RegisterGreetServiceServer(s, &server{})
+
 	if err := s.Serve(lis); err != nil {
-		log.Fatalf("Failed to server: %v", err)
+		log.Fatalf("Failed to serve %v", err)
 	}
 }
