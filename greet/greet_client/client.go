@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 
@@ -8,7 +9,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-func main(){
+func main() {
 	fmt.Println("salam, I am client 0_0")
 
 	// Open an INSECURE client connection(cc)
@@ -19,5 +20,23 @@ func main(){
 	defer cc.Close()
 
 	c := greetpb.NewGreetServiceClient(cc)
-	fmt.Printf("Created client: %f", c)
+	doUnary(c)
+
+}
+
+func doUnary(c greetpb.GreetServiceClient) {
+
+	fmt.Println("Starting to do unary PRC...")
+
+	req := &greetpb.GreetRequest{
+		Greeting: &greetpb.Greeting{
+			FirstName: "Lazizbek",
+			LastName:  "Kahramonov",
+		},
+	}
+	res, err := c.Greet(context.Background(), req)
+	if err != nil {
+		log.Fatalf("Error while calling Greet RPC: %v", err)
+	}
+	log.Printf("Response from Greet: %v", res.Result)
 }
